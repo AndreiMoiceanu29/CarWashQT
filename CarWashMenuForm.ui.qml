@@ -1,6 +1,5 @@
 import QtQuick 2.4
 import QtQuick.Controls 2.15
-import "objectHandler.js" as ObjectHandler
 
 Item {
     property color normalColor: "#2e856e"
@@ -27,7 +26,7 @@ Item {
 
                 Button {
                     id: button
-                    text: qsTr("Add Car")
+                    text: qsTr("Add CarWash")
                     background: Rectangle {
                         width: parent.width
                         height: parent.height
@@ -35,17 +34,11 @@ Item {
                         radius: width / 3
                         color: button.down ? hoverColor : normalColor
                     }
-                    onClicked: {
-                        addCarMenu.show()
-                    }
-                }
-                AddCar{
-                    id: addCarMenu
                 }
 
                 Button {
                     id: button1
-                    text: qsTr("Update Car")
+                    text: qsTr("Update CarWash")
                     background: Rectangle {
                         width: parent.width
                         height: parent.height
@@ -57,7 +50,7 @@ Item {
 
                 Button {
                     id: button2
-                    text: qsTr("Delete Car")
+                    text: qsTr("Delete CarWash")
                     background: Rectangle {
                         width: parent.width
                         height: parent.height
@@ -80,52 +73,34 @@ Item {
                 model: ListModel {
 
                     ListElement {
-                        name: "Dacia Sandero"
-                        carId: "2"
-                        carOwner: "Moiceanu Andrei"
-                        carPlateNumber: "AG06DGA"
+                        name: "Self Mioveni"
+                        carWashId: "2"
+                        carWashOwner: "Moiceanu Andrei"
                     }
                     ListElement {
-                        name: "BMW Seria 3"
-                        carId: "2"
-                        carOwner: "Moiceanu Andrei"
-                        carPlateNumber: "AG29MSE"
+                        name: "Self Mioveni"
+                        carWashId: "2"
+                        carWashOwner: "Moiceanu Andrei"
                     }
                     ListElement {
-                        name: "Dacia Sandero"
-                        carId: "2"
-                        carOwner: "Moiceanu Andrei"
-                        carPlateNumber: "AG06DGA"
+                        name: "Self Mioveni"
+                        carWashId: "2"
+                        carWashOwner: "Moiceanu Andrei"
                     }
                     ListElement {
-                        name: "BMW Seria 3"
-                        carId: "2"
-                        carOwner: "Moiceanu Andrei"
-                        carPlateNumber: "AG29MSE"
+                        name: "Self Mioveni"
+                        carWashId: "2"
+                        carWashOwner: "Moiceanu Andrei"
                     }
                     ListElement {
-                        name: "Dacia Sandero"
-                        carId: "2"
-                        carOwner: "Moiceanu Andrei"
-                        carPlateNumber: "AG06DGA"
+                        name: "Self Mioveni"
+                        carWashId: "2"
+                        carWashOwner: "Moiceanu Andrei"
                     }
                     ListElement {
-                        name: "BMW Seria 3"
-                        carId: "2"
-                        carOwner: "Moiceanu Andrei"
-                        carPlateNumber: "AG29MSE"
-                    }
-                    ListElement {
-                        name: "Dacia Sandero"
-                        carId: "2"
-                        carOwner: "Moiceanu Andrei"
-                        carPlateNumber: "AG06DGA"
-                    }
-                    ListElement {
-                        name: "BMW Seria 3"
-                        carId: "2"
-                        carOwner: "Moiceanu Andrei"
-                        carPlateNumber: "AG29MSE"
+                        name: "Self Mioveni"
+                        carWashId: "2"
+                        carWashOwner: "Moiceanu Andrei"
                     }
                 }
                 delegate: Item {
@@ -142,17 +117,12 @@ Item {
                             font.bold: true
                         }
                         Text {
-                            text: carId
+                            text: carWashId
                             anchors.verticalCenter: parent.verticalCenter
                             font.bold: true
                         }
                         Text {
-                            text: carOwner
-                            anchors.verticalCenter: parent.verticalCenter
-                            font.bold: true
-                        }
-                        Text {
-                            text: carPlateNumber
+                            text: carWashOwner
                             anchors.verticalCenter: parent.verticalCenter
                             font.bold: true
                         }

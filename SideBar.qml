@@ -7,6 +7,9 @@ Item {
     property color selectedColor: "#dfeae2"
     property color textColor: "white"
     property alias colWidth: column.width
+    property alias carBtn: carsMouseArea
+    property alias carWashBtn: carWashesMouseArea
+    property alias makeReservationsBtn: reservationsMouseArea
     //width: parent.width
     //height: parent.height
 
