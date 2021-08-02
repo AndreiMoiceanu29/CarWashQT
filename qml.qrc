@@ -4,10 +4,12 @@
         <file>SideBar.qml</file>
         <file>CarMenu.qml</file>
         <file>CarWashMenu.qml</file>
-        <file>CarWashMenuForm.ui.qml</file>
         <file>MakeAReservation.qml</file>
         <file>MakeAReservationForm.ui.qml</file>
         <file>AddCar.qml</file>
         <file>objectHandler.js</file>
+        <file>AddCarWash.qml</file>
+        <file>LoginPanel.qml</file>
+        <file>RepositorySelection.qml</file>
     </qresource>
 </RCC>

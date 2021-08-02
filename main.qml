@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.15
+import QtQuick.Dialogs 1.0
 
 ApplicationWindow {
     id: window
@@ -22,7 +23,7 @@ ApplicationWindow {
                 stackView.pop()
             }
 
-            stackView.push("qrc:/CarWashMenuForm.ui.qml")
+            stackView.push("qrc:/CarWashMenu.qml")
 
         }
         carBtn.onClicked: {
@@ -42,6 +43,24 @@ ApplicationWindow {
 
 
         //CarMenu{}
+        RepositorySelection{
+            id:repoSelection
+            onFileChoosed: {
+                console.log("File choosed")
+                if(stackView.depth > 1) {
+                    stackView.pop()
+                }
+                stackView.push("qrc:/CarMenu.qml")
+            }
+            onMemoryRepoChoosed: {
+                console.log("File choosed")
+                if(stackView.depth > 1) {
+                    stackView.pop()
+                }
+                stackView.push("qrc:/CarMenu.qml")
+            }
+        }
+
         Rectangle {
             id: pageBg
             width: window.width - 200
@@ -50,9 +69,11 @@ ApplicationWindow {
 
             StackView {
                 id: stackView
-                initialItem: "qrc:/CarMenu.qml"
+                initialItem: "qrc:/LoginPanel.qml"
                 anchors.fill: parent
             }
+
+
 
 
 
