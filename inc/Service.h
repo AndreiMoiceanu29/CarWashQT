@@ -6,35 +6,65 @@
 #include "MemoryRepository.h"
 #include "Validator.h"
 #include <QObject>
-
+#include <QQmlEngine>
+#include <QVariant>
+#include <QVector>
+#include <QVariantList>
+Q_DECLARE_METATYPE(Car)
+Q_DECLARE_METATYPE(CarWash)
 class Service: public QObject
 {
+
     Q_OBJECT
+    Q_DISABLE_COPY(Service)
+    Q_PROPERTY(QVariantList cars READ cars NOTIFY loadCars)
+    Q_PROPERTY(QVariantList carWashes READ carWashes NOTIFY loadCarWashes)
 	IRepository<Car*>* carRepo;
 	IRepository<CarWash*>* carWashRepo;
 	Validator dataValidator;
+    static Service* instance;
 public:
+    ~Service();
+    static Service* GetInstance();
+    static QObject* qmlInstance(QQmlEngine *engine, QJSEngine* scriptEngine){
+        Q_UNUSED(engine);
+        Q_UNUSED(scriptEngine);
+        return new Service;
+    }
+private:
 	Service();
 	Service(IRepository<Car*>*, IRepository<CarWash*>*);
 	Service(Validator, IRepository<Car*>*, IRepository<CarWash*>*);
-	
-	void createCar(Car);
+    void connectSignals();
+
+
+public slots:
+    void createCar(QVariant carV);
 	Car readCar(int id);
-	Car updateCar(Car oldCar, Car newCar);
+    Car updateCar(QVariant oldCarV, QVariant newCarV);
 	Car deleteCar(int id);
 
-	void createCarWash(CarWash);
+    void createCarWash(QVariant);
 	CarWash readCarWash(int id);
-	CarWash updateCarWash(CarWash odlCarWash, CarWash newCarWash);
+    CarWash updateCarWash(QVariant odlCarWashV, QVariant newCarWashV);
 	CarWash deleteCarWash(int id);
 
 	void makeReservation(int carId, int carWashId);
+
+    QVariantList cars();
+    QVariantList carWashes();
 	
-	std::vector<CarWash> getAllCarWashes();
-	std::vector<Car> getAllCars();
-	~Service();
+    std::vector<CarWash> getAllCarWashes();
+    std::vector<Car> getAllCars();
 
 
-	
+
+
+signals:
+    void loadCars();
+    void loadCarWashes();
+
+
 };
+
 #endif

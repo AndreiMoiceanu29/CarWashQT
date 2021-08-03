@@ -3,23 +3,32 @@
 
 #include <string>
 #include <vector>
+#include <QObject>
 #include "Entity.h"
 #include "IObserver.h"
 
 class CarWash: public Entity, public IObserver
 {
-	std::string name;
-	std::string owner;
+    Q_OBJECT
+    Q_PROPERTY(QString name READ getName WRITE setName);
+    Q_PROPERTY(QString owner READ getOwner WRITE setOwner);
+    Q_PROPERTY(int entityId READ getId WRITE setId);
+    Q_PROPERTY(std::vector<int> carIds READ getCarIds WRITE setCarIds);
+private:
+    QString name;
+    QString owner;
 	
 	std::vector<int> carIds;
 public:
 	CarWash();
-	CarWash(std::string, std::string, int);
+    CarWash(const CarWash&);
+    CarWash(QString, QString, int);
+    CarWash& operator=(const CarWash&);
 
-	std::string getName();
-	void setName(std::string);
-	std::string getOwner();
-	void setOwner(std::string);
+    QString getName();
+    void setName(QString);
+    QString getOwner();
+    void setOwner(QString);
 	
 	std::vector<int> getCarIds();
 	void setCarIds(std::vector<int>);

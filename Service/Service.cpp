@@ -2,7 +2,11 @@
 #include <vector>
 #include <iostream>
 #include <list>
-Service::Service(){}
+#include <QDebug>
+Service::Service(){
+    this->carRepo = new MemoryRepository<Car*>();
+    this->carWashRepo = new MemoryRepository<CarWash*>();
+}
 
 Service::Service(Validator dataVal, IRepository<Car*> *carRepository, IRepository<CarWash*> *carWashRepository){
 	this->carRepo = carRepository;
@@ -15,10 +19,27 @@ Service::Service(IRepository<Car*> *carRepository, IRepository<CarWash*> *carWas
 	this->carRepo = carRepository;
 }
 
-void Service::createCar(Car car){
+Service* Service::GetInstance(){
+    if(!instance){
+        instance = new Service();
+
+    }else{
+        return instance;
+    }
+}
+
+void Service::createCar(QVariant carV){
+    Car* carPtr = carV.value<Car*>();
+    Car car = *carPtr;
+    if(carV.canConvert<Car*>()){
+        qDebug() << "Can Convert";
+    }
+    qDebug() << car.getName();
 	this->dataValidator.validateCar(car,this->getAllCars(),false);
 	Car* myCar = new Car(car.getName(),car.getOwner(),car.getPlateNumber(),car.getId());
 	this->carRepo->addEntity(myCar);
+    qDebug() << "Added car";
+    emit loadCars();
 }
 
 Car Service::readCar(int id){
@@ -28,7 +49,11 @@ Car Service::readCar(int id){
 	return car;
 }
 
-Car Service::updateCar(Car oldCar, Car newCar){
+Car Service::updateCar(QVariant oldCarV, QVariant newCarV){
+    Car* oldCarPtr = oldCarV.value<Car*>();
+    Car* newCarPtr = newCarV.value<Car*>();
+    Car oldCar = *oldCarPtr;
+    Car newCar = *newCarPtr;
 	Car *carPtr = this->carRepo->getEntity(oldCar.getId());
 	this->dataValidator.validateCar(newCar,this->getAllCars(),true);
 	carPtr->setName(oldCar.getName());
@@ -36,6 +61,7 @@ Car Service::updateCar(Car oldCar, Car newCar){
 	carPtr->setPlateNumber(oldCar.getPlateNumber());
 	Car *updatedCarPtr = this->carRepo->updateEntity(carPtr, carPtr);
 	Car updatedCar = *updatedCarPtr;
+    emit loadCars();
 	return updatedCar;
 }
 
@@ -45,14 +71,17 @@ Car Service::deleteCar(int id){
 	Car deletedCar = *deletedCarPtr;
 	deletedCarPtr->notify();
 	delete deletedCarPtr;
-
+    emit loadCars();
 	return deletedCar;
 }
 
-void Service::createCarWash(CarWash carWash){
-	CarWash* carWashPtr = new CarWash(carWash);
+void Service::createCarWash(QVariant carWashV){
+
+    CarWash* carWashPtr = carWashV.value<CarWash*>();
+    CarWash carWash = *carWashPtr;
 	this->dataValidator.validateCarWash(carWash,this->getAllCarWashes(),false);
 	this->carWashRepo->addEntity(carWashPtr);
+    emit loadCarWashes();
 }
 
 CarWash Service::readCarWash(int id){
@@ -62,9 +91,13 @@ CarWash Service::readCarWash(int id){
 	return carWash;
 }
 
-CarWash Service::updateCarWash(CarWash oldCarWash, CarWash newCarWash){
-	CarWash* carWash = this->carWashRepo->getEntity(oldCarWash.getId());
-	
+CarWash Service::updateCarWash(QVariant oldCarWashV, QVariant newCarWashV){
+
+    CarWash *oldCarWashPtr = oldCarWashV.value<CarWash*>();
+    CarWash* newCarWashPtr = newCarWashV.value<CarWash*>();
+    CarWash oldCarWash = *oldCarWashPtr;
+    CarWash newCarWash = *newCarWashPtr;
+    CarWash* carWash = this->carWashRepo->getEntity(oldCarWash.getId());
 	this->dataValidator.validateCarWash(newCarWash,this->getAllCarWashes(),true);
 	carWash->setName(newCarWash.getName());
 	carWash->setOwner(newCarWash.getOwner());
@@ -72,7 +105,7 @@ CarWash Service::updateCarWash(CarWash oldCarWash, CarWash newCarWash){
 	CarWash *updatedCarWashPtr = this->carWashRepo->updateEntity(carWash, carWash);
 	CarWash updatedCarWash = *updatedCarWashPtr;
 
-
+    emit loadCarWashes();
 	return updatedCarWash;
 }
 
@@ -89,7 +122,7 @@ CarWash Service::deleteCarWash(int id){
 		car = this->carRepo->updateEntity(car,newCar);
 		delete car;
 	}
-
+    emit loadCarWashes();
 	delete deletedCarWashPtr;
 	return deletedCarWash;
 }
@@ -121,6 +154,7 @@ void Service::makeReservation(int carId, int carWashId){
 
 	oldCar = this->carRepo->updateEntity(oldCar, newCar);
 	delete oldCar;
+    emit loadCarWashes();
 }
 
 std::vector<CarWash> Service::getAllCarWashes(){
@@ -130,6 +164,24 @@ std::vector<CarWash> Service::getAllCarWashes(){
 		carWashes.push_back(*entity);
 	}
 	return carWashes;
+}
+
+QVariantList Service::cars(){
+    QVariantList cars;
+    std::vector<Car> allCars = getAllCars();
+    for(auto  car: allCars){
+        cars.append(QVariant::fromValue(car));
+    }
+    return cars;
+}
+
+QVariantList Service::carWashes(){
+    QVariantList carWashes;
+    std::vector<CarWash> allCarWashes = getAllCarWashes();
+    for(auto carWash: allCarWashes){
+        carWashes.append(QVariant::fromValue(carWash));
+    }
+    return carWashes;
 }
 
 std::vector<Car> Service::getAllCars(){

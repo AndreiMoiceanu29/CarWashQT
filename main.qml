@@ -5,8 +5,8 @@ import QtQuick.Dialogs 1.0
 
 ApplicationWindow {
     id: window
-    width: 700
-    height: 480
+    width: 1024
+    height: 800
     visible: true
     title: qsTr("Hello World")
 

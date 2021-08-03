@@ -12,7 +12,8 @@ SOURCES += \
         Model/Entity.cpp \
         Repository/FactorySettings.cpp \
         Service/Service.cpp \
-        Utilities/Utilities.cpp \
+        Utilities/Undo.cpp \
+        Utilities/sort.cpp \
         Validator/Validator.cpp \
         main.cpp
 
@@ -46,8 +47,10 @@ HEADERS += \
     inc/MemoryRepository.h \
     inc/RepoFactory.h \
     inc/Service.h \
+    inc/Undo.h \
     inc/Utilities.h \
     inc/Validator.h \
+    inc/sort.h \
     inc/tests/TestCSVFileRepository.h \
     inc/tests/TestCar.h \
     inc/tests/TestCarWash.h \
@@ -56,4 +59,6 @@ HEADERS += \
     inc/tests/TestMemoryRepository.h \
     inc/tests/TestRepoFactory.h \
     inc/tests/TestService.h \
-    inc/tests/TestValidator.h
+    inc/tests/TestValidator.h \
+    inc/sort.h \
+    inc/Undo.h

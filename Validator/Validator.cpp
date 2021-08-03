@@ -8,8 +8,8 @@ Validator::Validator(){}
 void Validator::validateCar(Car& car, std::vector<Car> cars,bool isUpdating){
 	std::vector<std::string> messages;
 	//Valideaza nume
-	std::string carName = car.getName();
-	std::string plateNumber = car.getPlateNumber();
+    std::string carName = car.getName().toStdString();
+    std::string plateNumber = car.getPlateNumber().toStdString();
 	if(!this->hasSpecifiedLength(carName,3,50)){
 		messages.push_back("Car's name is too long or too short.");
 	}
@@ -17,7 +17,7 @@ void Validator::validateCar(Car& car, std::vector<Car> cars,bool isUpdating){
 	if(!this->hasNoSpecialCharacters(carName)){
 		messages.push_back("Car's name contains special characters.");
 	}
-	std::string carOwner = car.getOwner();
+    std::string carOwner = car.getOwner().toStdString();
 	if(!this->hasSpecifiedLength(carOwner,3,50)){
 		messages.push_back("Owner's name is too long or too short.");
 	}
@@ -41,8 +41,8 @@ void Validator::validateCar(Car& car, std::vector<Car> cars,bool isUpdating){
 }
 
 void Validator::validateCarWash(CarWash& carWash, std::vector<CarWash> carWashes,bool isUpdating){
-	std::string carWashName = carWash.getName();
-	std::string carWashOwner = carWash.getOwner();
+    std::string carWashName = carWash.getName().toStdString();
+    std::string carWashOwner = carWash.getOwner().toStdString();
 	std::vector<std::string> messages;
 	if(!(hasSpecifiedLength(carWashName,3,50))){
 		messages.push_back("Too many or too low characters in the name");

@@ -1,10 +1,13 @@
 
 #ifndef H_ENTITY
 #define H_ENTITY
-class Entity
+#include<QObject>
+class Entity: public QObject
 {
+    Q_OBJECT
+    Q_PROPERTY(int entityId READ getId WRITE setId);
 protected:
-	int id;
+    int entityId;
 public:
 	Entity();
 	int getId();

@@ -1,5 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 2.15
+import com.mge.service 1.0
+import com.mge.car 1.0
 import "objectHandler.js" as ObjectHandler
 
 Item {
@@ -17,6 +19,63 @@ Item {
             anchors.fill: parent
             anchors.topMargin: 107
             spacing: 40
+            Row {
+                spacing: 25
+                id: sortRow
+                Button {
+                    id: sortByNameBtn
+                    text: "Sort By Name"
+                    background: Rectangle {
+                        width: parent.width
+                        height: parent.height
+                        anchors.fill: parent
+                        radius: width / 3
+                        color: sortByNameBtn.down ? hoverColor : normalColor
+                    }
+                }
+
+                Button {
+                    id: sortByOwnerBtn
+                    text: "Sort By Owner"
+                    background: Rectangle {
+                        width: parent.width
+                        height: parent.height
+                        anchors.fill: parent
+                        radius: width / 3
+                        color: sortByOwnerBtn.down ? hoverColor : normalColor
+                    }
+                }
+                Button {
+                    id: sortByPlateBtn
+                    text: "Sort by plate number"
+                    background: Rectangle {
+                        width: parent.width
+                        height: parent.height
+                        anchors.fill: parent
+                        radius: width / 3
+                        color: sortByPlateBtn.down ? hoverColor : normalColor
+                    }
+                }
+            }
+
+            Row {
+                id: filtersRow
+                spacing: 10
+                TextField {
+                    id: carNameFilterTxt
+                    placeholderText: "Car Name"
+                }
+
+                TextField {
+                    id: carOwnerFilterTxt
+                    placeholderText: "Car Owner"
+                }
+                TextField {
+                    id: carPlateNumberFilterTxt
+                    placeholderText: "Car Plate Number"
+                }
+
+            }
 
             Row {
                 id: row
@@ -37,10 +96,15 @@ Item {
                     }
                     onClicked: {
                         addCarMenu.show()
+
                     }
                 }
                 AddCar{
                     id: addCarMenu
+                    onRequestAddCar: {
+
+                        Service.createCar(carEntity);
+                    }
                 }
 
                 Button {
@@ -66,6 +130,37 @@ Item {
                         color: button2.down ? hoverColor : normalColor
                     }
                 }
+                Button {
+                    id: undoBtn
+                    text: "Undo"
+                    background: Rectangle{
+                        width: parent.width
+                        height: parent.height
+                        anchors.fill: parent
+                        radius: width / 3
+                        color: undoBtn.down ? hoverColor : normalColor
+                    }
+                }
+                Button {
+                    id: redoBtn
+                    text: "Redo"
+                    background: Rectangle {
+                        width: parent.width
+                        height: parent.height
+                        anchors.fill: parent
+                        radius: width / 3
+                        color: redoBtn.down ? hoverColor: normalColor
+                    }
+                }
+            }
+
+            Connections {
+                target:Service
+                onLoadCars: {
+                    console.log("Signal sent!")
+                    console.log(JSON.stringify((Service.cars[0])))
+                    listView.model = Service.cars
+                }
             }
 
             ListView {
@@ -77,88 +172,32 @@ Item {
                     anchors.right: parent.right
                 }
                 anchors.horizontalCenter: parent.horizontalCenter
-                model: ListModel {
+                model: Service.cars
 
-                    ListElement {
-                        name: "Dacia Sandero"
-                        carId: "2"
-                        carOwner: "Moiceanu Andrei"
-                        carPlateNumber: "AG06DGA"
-                    }
-                    ListElement {
-                        name: "BMW Seria 3"
-                        carId: "2"
-                        carOwner: "Moiceanu Andrei"
-                        carPlateNumber: "AG29MSE"
-                    }
-                    ListElement {
-                        name: "Dacia Sandero"
-                        carId: "2"
-                        carOwner: "Moiceanu Andrei"
-                        carPlateNumber: "AG06DGA"
-                    }
-                    ListElement {
-                        name: "BMW Seria 3"
-                        carId: "2"
-                        carOwner: "Moiceanu Andrei"
-                        carPlateNumber: "AG29MSE"
-                    }
-                    ListElement {
-                        name: "Dacia Sandero"
-                        carId: "2"
-                        carOwner: "Moiceanu Andrei"
-                        carPlateNumber: "AG06DGA"
-                    }
-                    ListElement {
-                        name: "BMW Seria 3"
-                        carId: "2"
-                        carOwner: "Moiceanu Andrei"
-                        carPlateNumber: "AG29MSE"
-                    }
-                    ListElement {
-                        name: "Dacia Sandero"
-                        carId: "2"
-                        carOwner: "Moiceanu Andrei"
-                        carPlateNumber: "AG06DGA"
-                    }
-                    ListElement {
-                        name: "BMW Seria 3"
-                        carId: "2"
-                        carOwner: "Moiceanu Andrei"
-                        carPlateNumber: "AG29MSE"
-                    }
+                delegate:Item{
+                             Column{
+                            Label{
+                            id: carId
+                            }
+                            Label{
+                            id: carName
+                            }
+                            Label{
+                            id: carOwner
+                            }
+                            Label{
+                            id:carPlateNumber
+                            }
+                        }
                 }
-                delegate: Item {
-                    x: 5
-                    width: 80
-                    height: 40
-                    Row {
-                        id: row1
-                        spacing: 10
-
-                        Text {
-                            text: name
-                            anchors.verticalCenter: parent.verticalCenter
-                            font.bold: true
-                        }
-                        Text {
-                            text: carId
-                            anchors.verticalCenter: parent.verticalCenter
-                            font.bold: true
-                        }
-                        Text {
-                            text: carOwner
-                            anchors.verticalCenter: parent.verticalCenter
-                            font.bold: true
-                        }
-                        Text {
-                            text: carPlateNumber
-                            anchors.verticalCenter: parent.verticalCenter
-                            font.bold: true
-                        }
-                    }
-                }
+            }
             }
         }
     }
+
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
 }
+##^##*/

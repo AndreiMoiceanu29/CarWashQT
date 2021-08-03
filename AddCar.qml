@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.12
 import QtQuick.Window 2.0
+import com.mge.car 1.0
 
 Window {
     property color normalColor: "#2e856e"
@@ -10,6 +11,7 @@ Window {
     height: 480
     //active: false
     id: addCarMenu
+    signal requestAddCar(Car carEntity);
     Rectangle {
         id: pageBg
         width: 640
@@ -75,6 +77,12 @@ Window {
 
                 }
                 onClicked: {
+                    //console.log(carNameTxt.text);
+                    var carEntity = Qt.createQmlObject("import com.mge.car 1.0; Car {
+                     entityId: parseInt(carIdTxt.text); name: carNameTxt.text; plateNumber: carPlateTxt.text; owner: carOwnerTxt.text
+                    }",parent,"Car.h");
+                    //console.log(carEntity.name);
+                    requestAddCar(carEntity);
                     addCarMenu.close()
                 }
             }
