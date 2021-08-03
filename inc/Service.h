@@ -17,8 +17,8 @@ class Service: public QObject
 
     Q_OBJECT
     Q_DISABLE_COPY(Service)
-    Q_PROPERTY(QVariantList cars READ cars NOTIFY loadCars)
-    Q_PROPERTY(QVariantList carWashes READ carWashes NOTIFY loadCarWashes)
+    Q_PROPERTY(QList<QObject*> cars READ cars NOTIFY loadCars)
+    Q_PROPERTY(QList<QObject*> carWashes READ carWashes NOTIFY loadCarWashes)
 	IRepository<Car*>* carRepo;
 	IRepository<CarWash*>* carWashRepo;
 	Validator dataValidator;
@@ -51,8 +51,8 @@ public slots:
 
 	void makeReservation(int carId, int carWashId);
 
-    QVariantList cars();
-    QVariantList carWashes();
+    QList<QObject*> cars();
+    QList<QObject*> carWashes();
 	
     std::vector<CarWash> getAllCarWashes();
     std::vector<Car> getAllCars();

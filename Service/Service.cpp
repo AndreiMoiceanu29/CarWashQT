@@ -3,6 +3,7 @@
 #include <iostream>
 #include <list>
 #include <QDebug>
+#include <QList>
 Service::Service(){
     this->carRepo = new MemoryRepository<Car*>();
     this->carWashRepo = new MemoryRepository<CarWash*>();
@@ -166,22 +167,22 @@ std::vector<CarWash> Service::getAllCarWashes(){
 	return carWashes;
 }
 
-QVariantList Service::cars(){
-    QVariantList cars;
-    std::vector<Car> allCars = getAllCars();
-    for(auto  car: allCars){
-        cars.append(QVariant::fromValue(car));
+QList<QObject*> Service::cars(){
+    std::vector<Car> cars = getAllCars();
+    QList<QObject*> carModel;
+    for(auto car: cars){
+        carModel.append(new Car(car));
     }
-    return cars;
+    return carModel;
 }
 
-QVariantList Service::carWashes(){
-    QVariantList carWashes;
-    std::vector<CarWash> allCarWashes = getAllCarWashes();
-    for(auto carWash: allCarWashes){
-        carWashes.append(QVariant::fromValue(carWash));
+QList<QObject*> Service::carWashes(){
+    std::vector<CarWash> carWashes = getAllCarWashes();
+    QList<QObject*> carWashModel;
+    for(auto carWash: carWashes){
+        carWashModel.append(new CarWash(carWash));
     }
-    return carWashes;
+    return carWashModel;
 }
 
 std::vector<Car> Service::getAllCars(){

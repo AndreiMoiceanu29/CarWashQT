@@ -158,8 +158,9 @@ Item {
                 target:Service
                 onLoadCars: {
                     console.log("Signal sent!")
-                    console.log(JSON.stringify((Service.cars[0])))
-                    listView.model = Service.cars
+                    console.log(Service.cars)
+                    console.log(Service.cars[0].name)
+                   // listView.model = Service.cars
                 }
             }
 
@@ -175,18 +176,31 @@ Item {
                 model: Service.cars
 
                 delegate:Item{
+                    width: parent.width
+                    height: parent.height
+                    required property int entityId
+                    required property string name
+                    required property string owner
+                    required property string plateNumber
                              Column{
+                        width: parent.width
+                        height: parent.height
+                        anchors.fill: parent
                             Label{
                             id: carId
+                            text: parent.parent.entityId
                             }
                             Label{
                             id: carName
+                            text: parent.parent.name
                             }
                             Label{
                             id: carOwner
+                            text: parent.parent.owner
                             }
                             Label{
                             id:carPlateNumber
+                            text: parent.parent.plateNumber
                             }
                         }
                 }
