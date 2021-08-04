@@ -11,5 +11,7 @@
         <file>AddCarWash.qml</file>
         <file>LoginPanel.qml</file>
         <file>RepositorySelection.qml</file>
+        <file>CarDelegate.qml</file>
+        <file>CarWashDelegate.qml</file>
     </qresource>
 </RCC>

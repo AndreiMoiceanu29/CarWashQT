@@ -6,6 +6,7 @@
 #include <QObject>
 #include "Entity.h"
 #include "IObserver.h"
+#include <QVector>
 
 class CarWash: public Entity, public IObserver
 {
@@ -13,12 +14,12 @@ class CarWash: public Entity, public IObserver
     Q_PROPERTY(QString name READ getName WRITE setName);
     Q_PROPERTY(QString owner READ getOwner WRITE setOwner);
     Q_PROPERTY(int entityId READ getId WRITE setId);
-    Q_PROPERTY(std::vector<int> carIds READ getCarIds WRITE setCarIds);
+    Q_PROPERTY(QVector<int> carIds READ getCarIds WRITE setCarIds);
 private:
     QString name;
     QString owner;
 	
-	std::vector<int> carIds;
+    QVector<int> carIds;
 public:
 	CarWash();
     CarWash(const CarWash&);
@@ -30,8 +31,8 @@ public:
     QString getOwner();
     void setOwner(QString);
 	
-	std::vector<int> getCarIds();
-	void setCarIds(std::vector<int>);
+    QVector<int> getCarIds();
+    void setCarIds(QVector<int>);
 	void update(int);
 	~CarWash();
 

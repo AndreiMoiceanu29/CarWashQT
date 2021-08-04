@@ -1,5 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 2.15
+import com.mge.service 1.0
+import com.mge.carwash 1.0
 
 Item {
     property color normalColor: "#2e856e"
@@ -36,7 +38,11 @@ Item {
                     }
                     onClicked: addCarWash.show()
                 }
-                AddCarWash {id: addCarWash}
+                AddCarWash {
+                    id: addCarWash
+                    onRequestAdd: Service.createCarWash(carWashEntity);
+                    onRequestUpdate: Service.updateCarWash(oldCarWash,carWashEntity);
+                }
 
                 Button {
                     id: button1
@@ -47,6 +53,11 @@ Item {
                         anchors.fill: parent
                         radius: width / 3
                         color: button1.down ? hoverColor : normalColor
+                    }
+                    onClicked: {
+                        addCarWash.isUpdating = true
+                        addCarWash.oldCarWash = Service.carWashes[listView.currentIndex];
+                        addCarWash.show()
                     }
                 }
 
@@ -60,75 +71,34 @@ Item {
                         radius: width / 3
                         color: button2.down ? hoverColor : normalColor
                     }
+                    onClicked:  Service.deleteCarWash(Service.carWashes[listView.currentIndex].entityId)
+                }
+            }
+
+            Connections {
+                target: Service
+                onLoadCarWashes: {
+                    listView.model = Service.carWashes
+                    listView.forceLayout()
                 }
             }
 
             ListView {
                 id: listView
-                width: parent.width
+                width: 640
                 height: 160
                 ScrollBar.vertical: ScrollBar {
                     active: true
                     anchors.right: parent.right
                 }
+                highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
                 anchors.horizontalCenter: parent.horizontalCenter
-                model: ListModel {
-
-                    ListElement {
-                        name: "Self Mioveni"
-                        carWashId: "2"
-                        carWashOwner: "Moiceanu Andrei"
-                    }
-                    ListElement {
-                        name: "Self Mioveni"
-                        carWashId: "2"
-                        carWashOwner: "Moiceanu Andrei"
-                    }
-                    ListElement {
-                        name: "Self Mioveni"
-                        carWashId: "2"
-                        carWashOwner: "Moiceanu Andrei"
-                    }
-                    ListElement {
-                        name: "Self Mioveni"
-                        carWashId: "2"
-                        carWashOwner: "Moiceanu Andrei"
-                    }
-                    ListElement {
-                        name: "Self Mioveni"
-                        carWashId: "2"
-                        carWashOwner: "Moiceanu Andrei"
-                    }
-                    ListElement {
-                        name: "Self Mioveni"
-                        carWashId: "2"
-                        carWashOwner: "Moiceanu Andrei"
-                    }
-                }
-                delegate: Item {
-                    x: 5
-                    width: 80
-                    height: 40
-                    Row {
-                        id: row1
-                        spacing: 10
-
-                        Text {
-                            text: name
-                            anchors.verticalCenter: parent.verticalCenter
-                            font.bold: true
-                        }
-                        Text {
-                            text: carWashId
-                            anchors.verticalCenter: parent.verticalCenter
-                            font.bold: true
-                        }
-                        Text {
-                            text: carWashOwner
-                            anchors.verticalCenter: parent.verticalCenter
-                            font.bold: true
-                        }
-                    }
+                model: Service.carWashes
+                delegate: CarWashDelegate {
+                    name: Service.carWashes[index].name
+                    owner: Service.carWashes[index].owner
+                    carWashId: Service.carWashes[index].entityId
+                    carIds: Service.carWashes[index].carIds
                 }
             }
         }
@@ -136,3 +106,9 @@ Item {
 }
 
 
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/

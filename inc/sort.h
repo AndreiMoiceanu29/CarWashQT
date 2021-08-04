@@ -3,25 +3,25 @@
 #include "Car.h"
 #include <vector>
 namespace sort_utils{
-	bool compareCarsByName(Car a, Car b,bool isDesc);
+    bool compareCarsByName(Car a, Car b,bool isDesc);
 
-	bool compareCarsByOwner(Car a, Car b, bool isDesc);
+    bool compareCarsByOwner(Car a, Car b, bool isDesc);
 
-	bool compareCarsByPlate(Car a, Car b, bool isDesc);
+    bool compareCarsByPlate(Car a, Car b, bool isDesc);
 
-	template <typename T>
-	std::vector<T> sort(bool(*compFunc)(T ,T ,bool), std::vector<T> entities, bool isDesc){
-		for(int i=0; i<entities.size() - 1;i++){
-			for(int j=0;j<entities.size() -i - 1;j++){
-				if(compFunc(entities[j],entities[j+1],isDesc)){
-					T aux = entities[j];
-					entities[j] = entities[j+1];
-					entities[j+1] = aux;
-				}
-			}
-		}
-		return entities;
-	}
+    template <typename T>
+    std::vector<T> sort(bool(*compFunc)(T ,T ,bool), std::vector<T> entities, bool isDesc){
+        for(int i=0; i<entities.size() - 1;i++){
+            for(int j=0;j<entities.size() -i - 1;j++){
+                if(compFunc(entities[j],entities[j+1],isDesc)){
+                    T aux = entities[j];
+                    entities[j] = entities[j+1];
+                    entities[j+1] = aux;
+                }
+            }
+        }
+        return entities;
+    }
 }
 
 namespace filter_utils{

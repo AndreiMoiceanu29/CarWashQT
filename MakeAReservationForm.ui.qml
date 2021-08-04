@@ -8,6 +8,7 @@ Item {
     property color normalColor: "#2e856e"
     property color hoverColor: "#b8d5cd"
     property color selectedColor: "#dfeae2"
+    signal requestReservation(int carId, int carWashId)
     Rectangle {
         id: pageBg
         width: 640
@@ -15,7 +16,7 @@ Item {
         color: "#5ca08e"
 
         Column {
-            Text{
+            Text {
                 text: "Make A Reservation"
                 font.bold: true
                 font.pointSize: 25
@@ -52,6 +53,9 @@ Item {
                         anchors.centerIn: parent
                         font.bold: true
                     }
+                }
+                onClicked: {
+                    requestReservation(parseInt(carTxt.text),parseInt(carWashTxt.text))
                 }
             }
         }

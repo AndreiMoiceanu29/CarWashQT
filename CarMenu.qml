@@ -1,4 +1,4 @@
-import QtQuick 2.4
+import QtQuick 2.15
 import QtQuick.Controls 2.15
 import com.mge.service 1.0
 import com.mge.car 1.0
@@ -24,6 +24,7 @@ Item {
                 id: sortRow
                 Button {
                     id: sortByNameBtn
+                    property bool asc: false
                     text: "Sort By Name"
                     background: Rectangle {
                         width: parent.width
@@ -32,10 +33,15 @@ Item {
                         radius: width / 3
                         color: sortByNameBtn.down ? hoverColor : normalColor
                     }
+                    onClicked: {
+                        Service.sortByName(asc);
+                        asc = !asc;
+                    }
                 }
 
                 Button {
                     id: sortByOwnerBtn
+                    property bool asc: false
                     text: "Sort By Owner"
                     background: Rectangle {
                         width: parent.width
@@ -44,16 +50,25 @@ Item {
                         radius: width / 3
                         color: sortByOwnerBtn.down ? hoverColor : normalColor
                     }
+                    onClicked: {
+                        Service.sortByOwner(asc);
+                        asc = !asc
+                    }
                 }
                 Button {
                     id: sortByPlateBtn
                     text: "Sort by plate number"
+                    property bool asc: false
                     background: Rectangle {
                         width: parent.width
                         height: parent.height
                         anchors.fill: parent
                         radius: width / 3
                         color: sortByPlateBtn.down ? hoverColor : normalColor
+                    }
+                    onClicked: {
+                        Service.sortByPlate(asc)
+                        asc = !asc
                     }
                 }
             }
@@ -64,15 +79,18 @@ Item {
                 TextField {
                     id: carNameFilterTxt
                     placeholderText: "Car Name"
+                    onTextChanged: Service.filter(carNameFilterTxt.text,carOwnerFilterTxt.text,carPlateNumberFilterTxt.text)
                 }
 
                 TextField {
                     id: carOwnerFilterTxt
                     placeholderText: "Car Owner"
+                    onTextChanged: Service.filter(carNameFilterTxt.text,carOwnerFilterTxt.text,carPlateNumberFilterTxt.text)
                 }
                 TextField {
                     id: carPlateNumberFilterTxt
                     placeholderText: "Car Plate Number"
+                    onTextChanged: Service.filter(carNameFilterTxt.text,carOwnerFilterTxt.text,carPlateNumberFilterTxt.text)
                 }
 
             }
@@ -104,7 +122,13 @@ Item {
                     onRequestAddCar: {
 
                         Service.createCar(carEntity);
+                        Service.filter(carNameFilterTxt.text,carOwnerFilterTxt.text,carPlateNumberFilterTxt.text)
                     }
+                    onRequestUpdate: {
+                        Service.updateCar(oldCar,carEntity);
+                        Service.filter(carNameFilterTxt.text,carOwnerFilterTxt.text,carPlateNumberFilterTxt.text)
+                    }
+
                 }
 
                 Button {
@@ -116,6 +140,12 @@ Item {
                         anchors.fill: parent
                         radius: width / 3
                         color: button1.down ? hoverColor : normalColor
+
+                    }
+                    onClicked: {
+                        addCarMenu.isUpdating = true;
+                        addCarMenu.oldCar = Service.cars[listView.currentIndex];
+                        addCarMenu.show()
                     }
                 }
 
@@ -128,6 +158,10 @@ Item {
                         anchors.fill: parent
                         radius: width / 3
                         color: button2.down ? hoverColor : normalColor
+                    }
+                    onClicked: {
+                        Service.deleteCar(Service.cars[listView.currentIndex].entityId);
+                        Service.filter(carNameFilterTxt.text,carOwnerFilterTxt.text,carPlateNumberFilterTxt.text)
                     }
                 }
                 Button {
@@ -157,53 +191,40 @@ Item {
             Connections {
                 target:Service
                 onLoadCars: {
-                    console.log("Signal sent!")
-                    console.log(Service.cars)
-                    console.log(Service.cars[0].name)
-                   // listView.model = Service.cars
+
+                    listView.model = Service.cars
+                    listView.forceLayout();
+                }
+                onCarsFiltered: {
+                    listView.model = Service.filteredCars
+                    for(var i=0; i<Service.filteredCars.length;i++){
+                        console.log(Service.filteredCars[i].name)
+                    }
+
+                    listView.forceLayout();
                 }
             }
 
             ListView {
                 id: listView
-                width: parent.width
+                width: 640
                 height: 160
                 ScrollBar.vertical: ScrollBar {
                     active: true
                     anchors.right: parent.right
                 }
                 anchors.horizontalCenter: parent.horizontalCenter
-                model: Service.cars
+                //model: Service.cars | Service.filteredCars
+                highlight: Rectangle {color: "lightgrey";radius:5;width:parent.width}
 
-                delegate:Item{
-                    width: parent.width
-                    height: parent.height
-                    required property int entityId
-                    required property string name
-                    required property string owner
-                    required property string plateNumber
-                             Column{
-                        width: parent.width
-                        height: parent.height
-                        anchors.fill: parent
-                            Label{
-                            id: carId
-                            text: parent.parent.entityId
-                            }
-                            Label{
-                            id: carName
-                            text: parent.parent.name
-                            }
-                            Label{
-                            id: carOwner
-                            text: parent.parent.owner
-                            }
-                            Label{
-                            id:carPlateNumber
-                            text: parent.parent.plateNumber
-                            }
-                        }
+                delegate: CarDelegate{
+                    carName: Service.filteredCars[index].name
+                    carOwner: Service.filteredCars[index].owner
+                    carPlateNumber: Service.filteredCars[index].plateNumber
+                    carId: Service.filteredCars[index].entityId
                 }
+
+
             }
             }
         }

@@ -1,17 +1,27 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.12
-import QtQuick.Window 2.0
+import QtQuick.Window 2.12
 import com.mge.car 1.0
 
 Window {
     property color normalColor: "#2e856e"
     property color hoverColor: "#b8d5cd"
     property color selectedColor: "#dfeae2"
+    property bool isUpdating: false
+    property Car oldCar
     width: 640
     height: 480
     //active: false
     id: addCarMenu
     signal requestAddCar(Car carEntity);
+    signal requestUpdate(Car oldCar, Car carEntity);
+    onClosing: {
+        carNameTxt.text = ""
+        carOwnerTxt.text = ""
+        carPlateTxt.text = ""
+        carIdTxt.text = isUpdating ? oldCar.entityId : ""
+    }
+
     Rectangle {
         id: pageBg
         width: 640
@@ -60,6 +70,7 @@ Window {
             TextField {
                 id: carIdTxt
                 placeholderText: "ID of car"
+                enabled: !isUpdating
             }
 
             Button {
@@ -82,7 +93,11 @@ Window {
                      entityId: parseInt(carIdTxt.text); name: carNameTxt.text; plateNumber: carPlateTxt.text; owner: carOwnerTxt.text
                     }",parent,"Car.h");
                     //console.log(carEntity.name);
-                    requestAddCar(carEntity);
+                    if(isUpdating)
+                         requestUpdate(addCarMenu.oldCar,carEntity);
+                    else
+                         requestAddCar(carEntity);
+
                     addCarMenu.close()
                 }
             }

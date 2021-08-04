@@ -13,11 +13,14 @@ ApplicationWindow {
 
 
     Row{
+        property bool logedIn: false
+        LoginPanel{id: loginPanel}
         id: row
         SideBar {
             id:sidebar
         width: 200
         height: parent.height
+        carWashBtn.enabled: row.logedIn
         carWashBtn.onClicked: {
             if(stackView.depth > 1){
                 stackView.pop()
@@ -26,17 +29,19 @@ ApplicationWindow {
             stackView.push("qrc:/CarWashMenu.qml")
 
         }
+        carBtn.enabled: row.logedIn
         carBtn.onClicked: {
             if(stackView.depth > 1) {
                 stackView.pop()
             }
             stackView.push("qrc:/CarMenu.qml")
         }
+        makeReservationsBtn.enabled: row.logedIn
         makeReservationsBtn.onClicked: {
             if(stackView.depth > 1){
                 stackView.pop()
             }
-            stackView.push("qrc:/MakeAReservationForm.ui.qml")
+            stackView.push("qrc:/MakeAReservation.qml")
         }
         }
 

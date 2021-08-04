@@ -6,6 +6,7 @@ Item {
     property color normalColor: "#2e856e"
     property color hoverColor: "#b8d5cd"
     property color selectedColor: "#dfeae2"
+    //property bool logedIn: false
     id: loginPanel
     Rectangle {
         id: pageBg
@@ -51,7 +52,9 @@ Item {
                 onClicked: {
                     if (usernameTxt.text === "admin" && passwordTxt.text === "admin"){
                         console.log("Login sucessfuly")
+                        row.logedIn = true;
                         selectRepoType.show()
+
 
                     }else {
                         console.log("Wrong credentials !")

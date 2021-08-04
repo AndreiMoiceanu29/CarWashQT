@@ -1,9 +1,12 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QQuickView>
 #include "Car.h"
 #include "CarWash.h"
 #include "Service.h"
+#include "sort.h"
+#include <QMetaType>
 Service *Service::instance = 0;
 int main(int argc, char *argv[])
 {
@@ -14,8 +17,10 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     qmlRegisterType<Car>("com.mge.car",1,0,"Car");
     qmlRegisterType<CarWash>("com.mge.carwash",1,0,"CarWash");
-
     qmlRegisterSingletonType<Service>("com.mge.service",1,0,"Service",&Service::qmlInstance);
+    qRegisterMetaType<Car>();
+    qRegisterMetaType<CarWash>();
+
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

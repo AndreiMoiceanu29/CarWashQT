@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 2.15
 import QtQuick.Window 2.0
 import QtQuick.Dialogs 1.0
+import com.mge.service 1.0
 
 Window {
     id: item1
@@ -92,20 +93,20 @@ Window {
                             id: carRepoFile
                             title: "Please select a file for car repo"
                             onAccepted: {
-                                console.log(carRepoFile.fileUrls)
+                                console.log(carRepoFile.fileUrls[0])
                             }
                         }
 
                         Button {
                             id: carWashRepoBtn
-                            text: "Car repo"
+                            text: "CarWash repo"
                             onClicked: carWashRepoFile.open()
                         }
                         FileDialog {
                             id: carWashRepoFile
                             title: "Please select a file for carwash repo"
                             onAccepted: {
-                                console.log(carWashRepoFile.fileUrls)
+                                console.log(carWashRepoFile.fileUrls[0])
                             }
                         }
                         Button {
@@ -114,7 +115,10 @@ Window {
                             onClicked: {
                                 if(carRepoFile.fileUrls && carWashRepoFile.fileUrls){
                                     fileSelectionPopup.close()
-                                    item1.fileChoosed(carRepoFile.fileUrls,carWashRepoFile.fileUrls)
+                                    console.log(carRepoFile.fileUrls[0])
+                                    console.log(carWashRepoFile.fileUrls[0])
+                                    item1.fileChoosed(carRepoFile.fileUrls,carWashRepoFile.fileUrls[0])
+                                    Service.setFileRepo(carRepoFile.fileUrls[0],carWashRepoFile.fileUrls[0]);
                                 }
                             }
                         }

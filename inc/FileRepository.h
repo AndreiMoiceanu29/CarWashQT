@@ -4,9 +4,12 @@
 #include "Car.h"
 #include "CarWash.h"
 #include <fstream>
+#include <QString>
 #include <iostream>
+#include <QVector>
 #include "Utilities.h"
-
+#include <QFile>
+#include <QDebug>
 
 template <class T>
 class FileRepository: public MemoryRepository<T>
@@ -49,12 +52,18 @@ public:
 			std::string plateNumber;
 			std::string id;
 			while(!ifs.eof()){
+                if(ifs.eof()) break;
 				std::getline(ifs,id,',');
-				std::getline(ifs,name,',');
+                if(ifs.eof()) break;
+                std::getline(ifs,name,',');
 				std::getline(ifs,plateNumber,',');
 				std::getline(ifs,owner,'\n');
 				if(ifs.eof()) break;
-				Car *car = new Car(name,owner,plateNumber,std::stoi(id));
+                if(id == "" ) break;
+                //qDebug() << "Aici";
+
+                qDebug() << QString::fromStdString(id);
+                Car *car = new Car(QString::fromStdString(name),QString::fromStdString(owner),QString::fromStdString(plateNumber),std::stoi(id));
 
 				T *entity =  static_cast<T*>(static_cast<void*>(&car));
 
@@ -67,12 +76,18 @@ public:
 				std::string id;
 				std::string owner;
 				std::string carIdsUntokenized;
+                if(ifs.eof()) break;
 				std::getline(ifs,id,',');
+                if(ifs.eof()) break;
 				std::getline(ifs,name,',');
 				std::getline(ifs,owner,',');
+                if(ifs.eof()) break;
+               // qDebug() << "Aici";
 				std::getline(ifs,carIdsUntokenized,'\n');
 				std::vector<std::string> carIds = Utilities::split(carIdsUntokenized.c_str(),':');
 				std::vector<int> ids;
+
+               // qDebug() << "Aici";
 				for(auto carId: carIds){
 					if(carId.size() != 0){
 						//Adauga carWash la masina;
@@ -82,8 +97,10 @@ public:
 				}
 
 				if(ifs.eof()) break;
-				CarWash* carWash = new CarWash(name,owner,std::stoi(id));
-				carWash->setCarIds(ids);
+
+
+                CarWash* carWash = new CarWash(QString::fromStdString(name),QString::fromStdString(owner),std::stoi(id));
+                carWash->setCarIds(QVector<int>::fromStdVector(ids));
 				T *entity =  static_cast<T*>(static_cast<void*>(&carWash));
 
 				this->addEntity(*entity);
@@ -102,17 +119,17 @@ public:
 
 				Car *car = static_cast<Car*>(static_cast<void*>(obj));
 				
-				ofs << car->getId() << ",";
-				ofs << car->getName() << ",";
-				ofs << car->getPlateNumber() << ",";
-				ofs << car->getOwner() << std::endl;
+                ofs << car->getId() << ",";
+                ofs << car->getName().toStdString() << ",";
+                ofs << car->getPlateNumber().toStdString() << ",";
+                ofs << car->getOwner().toStdString() << std::endl;
 			} else if(Utilities::instanceof<CarWash>(*object_type)) {
 				CarWash *carWash = static_cast<CarWash*>(static_cast<void*>(obj));
-				std::vector<int> carIds = carWash->getCarIds();
+                QVector<int> carIds = carWash->getCarIds();
 
 				ofs << carWash->getId() << ",";
-				ofs << carWash->getName() << ",";
-				ofs << carWash->getOwner() << ",";
+                ofs << carWash->getName().toStdString() << ",";
+                ofs << carWash->getOwner().toStdString() << ",";
 				for(auto id : carIds){
 					ofs << id << ":";
 				}

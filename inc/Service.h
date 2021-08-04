@@ -17,10 +17,12 @@ class Service: public QObject
 
     Q_OBJECT
     Q_DISABLE_COPY(Service)
-    Q_PROPERTY(QList<QObject*> cars READ cars NOTIFY loadCars)
-    Q_PROPERTY(QList<QObject*> carWashes READ carWashes NOTIFY loadCarWashes)
+    Q_PROPERTY(QVariant cars READ cars NOTIFY loadCars)
+    Q_PROPERTY(QVariant carWashes READ carWashes NOTIFY loadCarWashes)
+    Q_PROPERTY(QVariant filteredCars READ filteredCars NOTIFY carsFiltered);
 	IRepository<Car*>* carRepo;
 	IRepository<CarWash*>* carWashRepo;
+    QList<QObject*> filteredCarsV;
 	Validator dataValidator;
     static Service* instance;
 public:
@@ -31,6 +33,7 @@ public:
         Q_UNUSED(scriptEngine);
         return new Service;
     }
+
 private:
 	Service();
 	Service(IRepository<Car*>*, IRepository<CarWash*>*);
@@ -50,10 +53,15 @@ public slots:
 	CarWash deleteCarWash(int id);
 
 	void makeReservation(int carId, int carWashId);
+    void sortByName(bool);
+    void sortByOwner(bool);
+    void sortByPlate(bool);
 
-    QList<QObject*> cars();
-    QList<QObject*> carWashes();
-	
+    QVariant cars();
+    QVariant filteredCars();
+    QVariant carWashes();
+    void filter(QString f1, QString f2, QString f3);
+    void setFileRepo(QString carPath, QString carWashPath);
     std::vector<CarWash> getAllCarWashes();
     std::vector<Car> getAllCars();
 
@@ -63,6 +71,7 @@ public slots:
 signals:
     void loadCars();
     void loadCarWashes();
+    void carsFiltered();
 
 
 };

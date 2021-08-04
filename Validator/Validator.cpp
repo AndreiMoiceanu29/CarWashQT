@@ -2,11 +2,26 @@
 #include <string>
 #include <vector>
 #include "CarWash.h"
+#include <QQmlEngine>
+#include <QStringList>
+#include <QString>
+#include <QQuickView>
 
-Validator::Validator(){}
+Validator::Validator(){
+    const QUrl url(QStringLiteral("qrc:/main.qml"));
+    QQmlEngine* qmlEngine;
+    QQuickView view(url);
+    qmlEngine = view.engine();
+}
+
+Validator& Validator::operator=(const Validator &){}
 
 void Validator::validateCar(Car& car, std::vector<Car> cars,bool isUpdating){
-	std::vector<std::string> messages;
+    const QUrl url(QStringLiteral("qrc:/main.qml"));
+    QQmlEngine* qmlEngine;
+    QQuickView view(url);
+    qmlEngine = view.engine();
+    QStringList messages;
 	//Valideaza nume
     std::string carName = car.getName().toStdString();
     std::string plateNumber = car.getPlateNumber().toStdString();
@@ -36,14 +51,19 @@ void Validator::validateCar(Car& car, std::vector<Car> cars,bool isUpdating){
 		messages.push_back("This ID is a negative number.");
 	}
 	if(messages.size() > 0){
-		throw messages;
+        qmlEngine->throwError(messages[0]);
+
 	}
 }
 
 void Validator::validateCarWash(CarWash& carWash, std::vector<CarWash> carWashes,bool isUpdating){
+    const QUrl url(QStringLiteral("qrc:/MakeAReservation.qml"));
+    QQmlEngine* qmlEngine;
+    QQuickView view(url);
+    qmlEngine = view.engine();
     std::string carWashName = carWash.getName().toStdString();
     std::string carWashOwner = carWash.getOwner().toStdString();
-	std::vector<std::string> messages;
+    QStringList messages;
 	if(!(hasSpecifiedLength(carWashName,3,50))){
 		messages.push_back("Too many or too low characters in the name");
 	}
@@ -67,13 +87,17 @@ void Validator::validateCarWash(CarWash& carWash, std::vector<CarWash> carWashes
 		messages.push_back("This ID is a negative number");
 	}
 	if(messages.size() > 0){
-		throw messages;
+        qmlEngine->throwError(messages[0]);
 	}
 
 }
 
 void Validator::validateIdForCar(int id,std::vector<Car> entities){
-	std::vector<std::string> messages;
+    const QUrl url(QStringLiteral("qrc:/MakeAReservation.qml"));
+    QQmlEngine* qmlEngine;
+    QQuickView view(url);
+    qmlEngine = view.engine();
+    QStringList messages;
 	bool exists = false;
 	if(id < 0){
 		messages.push_back("ID must be positive");
@@ -86,14 +110,21 @@ void Validator::validateIdForCar(int id,std::vector<Car> entities){
 	}
 	if(!exists){
 		messages.push_back("This ID does not exist");
+
 	}
 	if(messages.size() > 0){
-		throw messages;
+        qDebug() << messages[0];
+        qmlEngine->throwError(messages[0]);
+
 	}
 }
 
 void Validator::validateIdForCarWash(int id, std::vector<CarWash> entities){
-	std::vector<std::string> messages;
+    const QUrl url(QStringLiteral("qrc:/main.qml"));
+    QQmlEngine* qmlEngine;
+    QQuickView view(url);
+    qmlEngine = view.engine();
+    QStringList messages;
 	bool exists = false;
 	if(id < 0){
 		messages.push_back("ID must be positive");
@@ -108,7 +139,7 @@ void Validator::validateIdForCarWash(int id, std::vector<CarWash> entities){
 		messages.push_back("This ID does not exist");
 	}
 	if(messages.size() > 0){
-		throw messages;
+        qmlEngine->throwError(messages[0]);
 	}
 }
 
@@ -126,7 +157,7 @@ bool Validator::hasNoSpecialCharacters(std::string str){
 	return true;
 }
 
-void Validator::validPlateNumber(std::string plateNumber,std::vector<std::string> &messages){
+void Validator::validPlateNumber(std::string plateNumber,QStringList &messages){
 	if(plateNumber[0]=='B'){
 		for(int i=1;i<4;i++){
 			if(!(plateNumber[i] >= '0' && plateNumber[i] <= '9')){
