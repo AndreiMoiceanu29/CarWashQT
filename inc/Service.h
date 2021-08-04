@@ -10,6 +10,7 @@
 #include <QVariant>
 #include <QVector>
 #include <QVariantList>
+#include "Undo.h"
 Q_DECLARE_METATYPE(Car)
 Q_DECLARE_METATYPE(CarWash)
 class Service: public QObject
@@ -25,6 +26,8 @@ class Service: public QObject
     QList<QObject*> filteredCarsV;
 	Validator dataValidator;
     static Service* instance;
+    std::vector<Undo*> actions;
+    std::vector<Undo*> redos;
 public:
     ~Service();
     static Service* GetInstance();
@@ -66,12 +69,19 @@ public slots:
     std::vector<Car> getAllCars();
 
 
+    void addUndoAction(Undo* action);
 
+        void undo();
+        void redo();
+        void freeRedo();
+        bool undoEmpty();
+        bool redoEmpty();
 
 signals:
     void loadCars();
     void loadCarWashes();
     void carsFiltered();
+    void throwError(QString error);
 
 
 };

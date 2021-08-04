@@ -41,6 +41,12 @@ Item {
                 id: carWashTxt
                 placeholderText: "CarWash ID"
             }
+            Connections{
+                target: Service
+                onThrowError:{
+                    popupTxt.text = error
+                }
+            }
 
             Button {
                 id: reserveBtn

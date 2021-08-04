@@ -9,6 +9,7 @@
 #include <FactorySettings.h>
 #include <FileRepository.h>
 #include <RepoFactory.h>
+#include "Undo.h"
 Service::Service(){
     this->carRepo = new MemoryRepository<Car*>();
     this->carWashRepo = new MemoryRepository<CarWash*>();
@@ -37,8 +38,10 @@ Service* Service::GetInstance(){
 void Service::createCar(QVariant carV){
     Car* carPtr = carV.value<Car*>();
     Car car = *carPtr;
-
-
+    qDebug() << "Aiciiiiiii";
+    AddCarUndo* addAction = new AddCarUndo{*this,car};
+    this->addUndoAction(addAction);
+    freeRedo();
 	this->dataValidator.validateCar(car,this->getAllCars(),false);
 	Car* myCar = new Car(car.getName(),car.getOwner(),car.getPlateNumber(),car.getId());
 	this->carRepo->addEntity(myCar);
@@ -58,6 +61,9 @@ Car Service::updateCar(QVariant oldCarV, QVariant newCarV){
     Car* newCarPtr = newCarV.value<Car*>();
     Car oldCar = *oldCarPtr;
     Car newCar = *newCarPtr;
+    UpdateCarUndo* updateAction = new UpdateCarUndo{*this,oldCar,newCar};
+    addUndoAction(updateAction);
+    freeRedo();
 	Car *carPtr = this->carRepo->getEntity(oldCar.getId());
 	this->dataValidator.validateCar(newCar,this->getAllCars(),true);
     carPtr->setName(newCar.getName());
@@ -72,9 +78,16 @@ Car Service::updateCar(QVariant oldCarV, QVariant newCarV){
 }
 
 Car Service::deleteCar(int id){
-	this->dataValidator.validateIdForCar(id, this->getAllCars());
+    try {
+        this->dataValidator.validateIdForCar(id,this->getAllCars());
+    }  catch (std::vector<std::string> messages) {
+        emit throwError(QString::fromStdString(messages[0]));
+    }
 	Car* deletedCarPtr = this->carRepo->deleteEntity(id);
 	Car deletedCar = *deletedCarPtr;
+    DeleteCarUndo* deleteAction = new DeleteCarUndo{*this,deletedCar};
+    addUndoAction(deleteAction);
+    freeRedo();
 	deletedCarPtr->notify();
 	delete deletedCarPtr;
     emit loadCars();
@@ -118,7 +131,11 @@ CarWash Service::updateCarWash(QVariant oldCarWashV, QVariant newCarWashV){
 
 
 CarWash Service::deleteCarWash(int id){
-	this->dataValidator.validateIdForCarWash(id,this->getAllCarWashes());
+    try {
+        this->dataValidator.validateIdForCarWash(id,this->getAllCarWashes());
+    }  catch (std::vector<std::string> messages) {
+        emit throwError(QString::fromStdString(messages[0]));
+    }
 	CarWash* deletedCarWashPtr = this->carWashRepo->deleteEntity(id);
 	CarWash deletedCarWash = *deletedCarWashPtr;
     QVector<int> carIds = deletedCarWash.getCarIds();
@@ -136,8 +153,18 @@ CarWash Service::deleteCarWash(int id){
 }
 
 void Service::makeReservation(int carId, int carWashId){
-    this->dataValidator.validateIdForCar(carId,this->getAllCars());
-    this->dataValidator.validateIdForCarWash(carWashId,this->getAllCarWashes());
+    try {
+        this->dataValidator.validateIdForCar(carId,this->getAllCars());
+    }  catch (std::vector<std::string> messages) {
+        emit throwError(QString::fromStdString(messages[0]));
+    }
+    try {
+        this->dataValidator.validateIdForCarWash(carWashId,this->getAllCarWashes());
+    }  catch (std::vector<std::string> messages) {
+        emit throwError(QString::fromStdString(messages[0]));
+    }
+
+
 
 	// ADD CAR TO CARWASH
 	CarWash* oldWash = this->carWashRepo->getEntity(carWashId);
@@ -272,6 +299,54 @@ std::vector<Car> Service::getAllCars(){
 
 	return cars;
 }
+
+void Service::addUndoAction(Undo *action){
+    this->actions.push_back(action);
+}
+void Service::undo(){
+
+    if(this->actions.size() > 0){
+
+        Undo* action = this->actions.back();
+
+        this->actions.pop_back();
+
+        action->doUndo();
+
+        this->redos.push_back(action);
+        //delete action;
+    }
+    emit carsFiltered();
+
+}
+
+void Service::redo(){
+    if(this->redos.size() > 0){
+        Undo* redoAction = this->redos.back();
+        this->redos.pop_back();
+
+        redoAction->doRedo();
+        this->actions.push_back(redoAction);
+    }
+    emit carsFiltered();
+}
+
+void Service::freeRedo(){
+    while(this->redos.size()){
+        Undo* action = this->redos.back();
+        this->redos.pop_back();
+        delete action;
+    }
+}
+
+bool Service::undoEmpty(){
+    return (this->actions.size() == 0);
+}
+
+bool Service::redoEmpty(){
+    return (this->redos.size() == 0);
+}
+
 
 Service::~Service(){
 	delete carRepo;

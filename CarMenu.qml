@@ -174,6 +174,10 @@ Item {
                         radius: width / 3
                         color: undoBtn.down ? hoverColor : normalColor
                     }
+                    onClicked: {
+                        Service.undo()
+                        Service.filter(carNameFilterTxt.text,carOwnerFilterTxt.text,carPlateNumberFilterTxt.text)
+                    }
                 }
                 Button {
                     id: redoBtn
@@ -184,6 +188,10 @@ Item {
                         anchors.fill: parent
                         radius: width / 3
                         color: redoBtn.down ? hoverColor: normalColor
+                    }
+                    onClicked: {
+                        Service.redo()
+                        Service.filter(carNameFilterTxt.text,carOwnerFilterTxt.text,carPlateNumberFilterTxt.text)
                     }
                 }
             }

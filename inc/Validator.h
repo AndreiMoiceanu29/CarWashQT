@@ -3,19 +3,15 @@
 #include "Car.h"
 #include <vector>
 #include <string>
-#include <QObject>
-#include <QStringList>
 #include "CarWash.h"
-class Validator: public QObject
+class Validator
 {
-    Q_OBJECT
 private:
 	bool hasSpecifiedLength(std::string,unsigned int,unsigned int);
 	bool hasNoSpecialCharacters(std::string);
-    void validPlateNumber(std::string,QStringList&);
+    void validPlateNumber(std::string,std::vector<std::string>&);
 public:
-	Validator();
-    Validator& operator=(const Validator&);
+    Validator();
 	void validateCar(Car&, std::vector<Car>,bool);
 	void validateCarWash(CarWash&, std::vector<CarWash>,bool);
 	void validateIdForCar(int, std::vector<Car>);
